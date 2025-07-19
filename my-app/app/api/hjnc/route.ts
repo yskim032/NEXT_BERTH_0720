@@ -1,3 +1,7 @@
+interface Vessel {
+  vesselName: string;
+}
+
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
@@ -7,7 +11,7 @@ export async function POST(request: NextRequest) {
     // HJNC 웹사이트에서 데이터를 가져옵니다
     const response = await axios.get('https://www.hjnc.co.kr/esvc/vessel/berthScheduleT');
     const $ = cheerio.load(response.data);
-    const vessels: any[] = [];
+    const vessels: Vessel[] = [];
 
     // 테이블의 각 행을 파싱합니다
     $('table tr').each((index, element) => {
