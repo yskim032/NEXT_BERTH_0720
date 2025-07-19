@@ -1,5 +1,17 @@
 'use client';
 
+interface Vessel {
+  vesselName: string;
+  vesselFullName: string;
+  vesselType: string;
+  arrivalTime: string;
+  departureTime: string;
+  carrier: string;
+  routeCode: string;
+  portInfo: string;
+}
+
+
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import Link from 'next/link';
@@ -184,14 +196,14 @@ export default function TestPage() {
       // BCT 데이터 가져오기
       const bctResponse = await axios.get('/api/bct');
       const newBctVessels: VesselData[] = bctResponse.data.dynamicContent.vesselInfo
-        .filter((vessel: any) => vessel.vesselFullName && vessel.vesselName)
-        .filter((vessel: any, index: number, self: any[]) => 
+        .filter((vessel: Vessel) => vessel.vesselFullName && vessel.vesselName)
+        .filter((vessel: Vessel, index: number, self: Vessel[]) => 
           index === self.findIndex(v => 
             v.vesselFullName === vessel.vesselFullName && 
             v.vesselName === vessel.vesselName
           )
         )
-        .map((vessel: any) => ({
+        .map((vessel: Vessel) => ({
           terminal: 'BCT',
           vesselName: vessel.vesselFullName,
           routeCode: vessel.vesselName,
@@ -208,14 +220,14 @@ export default function TestPage() {
         console.log('HJNC raw response:', hjncResponse.data);
 
         const newHjncVessels: VesselData[] = hjncResponse.data
-          .filter((vessel: any) => {
+          .filter((vessel: Vessel) => {
             const isValid = vessel.vesselName && vessel.vesselName.trim() !== '';
             if (!isValid) {
               console.log('Filtered out vessel:', vessel);
             }
             return isValid;
           })
-          .map((vessel: any) => {
+          .map((vessel: Vessel) => {
             const mappedVessel = {
               terminal: 'HJNC',
               vesselName: vessel.vesselName,
